@@ -6,6 +6,9 @@ import { getBytes, ref as sRef } from "firebase/storage";
 
 import { useDb, useStorage } from '../_app';
 import Bollard from "../api/bollard";
+import PageWrapper from "../../components/PageWrapper";
+import ImageWrapper from "../../components/ImageWrapper";
+import DataWrapper from "../../components/DataWrapper";
 
 interface BollardPageProps {
 	app: FirebaseApp
@@ -19,8 +22,8 @@ const BollardPage = ({ app }: BollardPageProps) => {
 
 	const [ data, setData ] = useState<Bollard | undefined>();
 
-	const dbRef = dRef(db);
 	useEffect(() => {
+		const dbRef = dRef(db);
 		if(pid == undefined) return;
 
 		// Query the database for information
@@ -42,21 +45,23 @@ const BollardPage = ({ app }: BollardPageProps) => {
 			setData((data) => data ? { ...data, image} : undefined);
 		});
 
-	}, [pid, dbRef, storage])
+	}, [pid, db, storage])
 
 	return (
-		<>
+		<PageWrapper>
 			{ data ? 
-				<div>
-					{data.name}
-					<img src={data.image} alt={`An image of the ${data.name}`} width={200}/>
-				</div> 
+				<DataWrapper>
+					<h1>{data.name}</h1>
+					<ImageWrapper>
+						<img src={data.image} width="100%" alt={`An image of the ${data.name}`} />
+					</ImageWrapper>
+				</DataWrapper>
 			:
 				<div>
 					Bollard {pid}
 				</div> 
 			}
-		</>
+		</PageWrapper>
 	);
 };
 
